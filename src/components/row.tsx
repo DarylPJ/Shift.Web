@@ -1,5 +1,5 @@
-import { Cell } from "./cell";
+import { PropsWithChildren } from "react";
 
-export function Row({ cellValues }: { cellValues: string[] }) {
-  return cellValues.map((i) => <Cell value={i}></Cell>);
+export function Row(props: PropsWithChildren) {
+  return <div>{props.children}</div>;
 }
