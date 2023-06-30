@@ -1,3 +1,5 @@
+import styles from "./shiftTable.module.css";
+
 import { Cell } from "./cell";
 import { Grid } from "./grid";
 import { Row } from "./row";
@@ -70,7 +72,7 @@ function renderShiftsForDay(
       continue;
     }
 
-    results.push(<div className={`shift-${shift}`}>{shiftValue}</div>);
+    results.push(<div className={styles[shift]}>{shiftValue}</div>);
   }
 
   return results;
