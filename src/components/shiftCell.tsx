@@ -4,11 +4,11 @@ interface ICellProps {
   header?: string;
 }
 
-export function Cell(props: PropsWithChildren<ICellProps>) {
+export function ShiftCell(props: PropsWithChildren<ICellProps>) {
   return (
-    <div>
+    <th>
       <div hidden={!props.header}>{props.header}</div>
       {props.children}
-    </div>
+    </th>
   );
 }

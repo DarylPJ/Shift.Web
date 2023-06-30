@@ -1,8 +1,5 @@
+import { ShiftCell } from "./shiftCell";
 import styles from "./shiftTable.module.css";
-
-import { Cell } from "./cell";
-import { Grid } from "./grid";
-import { Row } from "./row";
 
 const daysOfTheWeek: ReadonlyArray<string> = [
   "Mon",
@@ -79,9 +76,9 @@ function renderShiftsForDay(
 }
 
 function renderDaysOfTheWeek(): JSX.Element {
-  const cells = daysOfTheWeek.map((i) => <Cell header={i}></Cell>);
+  const cells = daysOfTheWeek.map((i) => <ShiftCell header={i}></ShiftCell>);
 
-  return <Row>{cells}</Row>;
+  return <tr>{cells}</tr>;
 }
 
 function renderShiftsForMonth(
@@ -108,7 +105,7 @@ function renderShiftsForMonth(
       const day = row * 7 + dayOfTheWeek + 1 - firstDay;
 
       if (day < 1 || day > daysInMonth) {
-        week.push(<Cell></Cell>);
+        week.push(<ShiftCell />);
         continue;
       }
 
@@ -117,10 +114,10 @@ function renderShiftsForMonth(
         settings
       );
 
-      week.push(<Cell header={day.toString()}>{shiftResult}</Cell>);
+      week.push(<ShiftCell header={day.toString()}>{shiftResult}</ShiftCell>);
     }
 
-    rows.push(<Row>{week}</Row>);
+    rows.push(<tr>{week}</tr>);
   }
 
   return rows;
@@ -131,5 +128,9 @@ export function ShiftTable({ settings }: { settings: IShiftSettings }) {
 
   const rows = [renderDaysOfTheWeek(), ...renderShiftsForMonth(date, settings)];
 
-  return <Grid>{rows}</Grid>;
+  return (
+    <table>
+      <tbody>{rows}</tbody>
+    </table>
+  );
 }
