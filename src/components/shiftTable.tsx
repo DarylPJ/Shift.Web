@@ -11,7 +11,22 @@ const daysOfTheWeek: ReadonlyArray<string> = [
   "Sun",
 ];
 
-type Shift = "blue" | "green" | "red" | "purple" | "yellow";
+const monthNames = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
+export type Shift = "blue" | "green" | "red" | "purple" | "yellow";
 type ShiftResults = "D" | "N" | "";
 
 const zeroDays = new Map<Shift, number>([
@@ -22,8 +37,9 @@ const zeroDays = new Map<Shift, number>([
   ["yellow", new Date(2021, 8, 20).getTime()],
 ]);
 
-export interface IShiftSettings {
+interface IShiftSettings {
   enabledShifts: Shift[];
+  date: Date;
 }
 
 function calculateShiftValue(date: Date, zeroDate: number): ShiftResults {
@@ -50,10 +66,7 @@ function calculateShiftValue(date: Date, zeroDate: number): ShiftResults {
   return "";
 }
 
-function renderShiftsForDay(
-  date: Date,
-  settings: IShiftSettings
-): JSX.Element[] {
+function renderShiftsForDay(settings: IShiftSettings): JSX.Element[] {
   const results = [];
 
   for (const shift of settings.enabledShifts) {
@@ -63,7 +76,7 @@ function renderShiftsForDay(
       continue;
     }
 
-    const shiftValue = calculateShiftValue(date, zeroDay);
+    const shiftValue = calculateShiftValue(settings.date, zeroDay);
 
     if (shiftValue === "") {
       continue;
@@ -81,17 +94,19 @@ function renderDaysOfTheWeek(): JSX.Element {
   return <tr>{cells}</tr>;
 }
 
-function renderShiftsForMonth(
-  date: Date,
-  settings: IShiftSettings
-): JSX.Element[] {
+function renderShiftsForMonth(settings: IShiftSettings): JSX.Element[] {
   const daysInMonth = new Date(
-    date.getFullYear(),
-    date.getMonth() + 1,
+    settings.date.getFullYear(),
+    settings.date.getMonth() + 1,
     0
   ).getDate();
 
-  let firstDay = new Date(date.getFullYear(), date.getMonth(), 1).getDay() - 1;
+  let firstDay =
+    new Date(
+      settings.date.getFullYear(),
+      settings.date.getMonth(),
+      1
+    ).getDay() - 1;
   if (firstDay < 0) {
     firstDay = 6;
   }
@@ -109,10 +124,14 @@ function renderShiftsForMonth(
         continue;
       }
 
-      const shiftResult = renderShiftsForDay(
-        new Date(date.getFullYear(), date.getMonth(), day),
-        settings
-      );
+      const shiftResult = renderShiftsForDay({
+        date: new Date(
+          settings.date.getFullYear(),
+          settings.date.getMonth(),
+          day
+        ),
+        enabledShifts: settings.enabledShifts,
+      });
 
       week.push(<ShiftCell header={day.toString()}>{shiftResult}</ShiftCell>);
     }
@@ -123,14 +142,17 @@ function renderShiftsForMonth(
   return rows;
 }
 
-export function ShiftTable({ settings }: { settings: IShiftSettings }) {
-  const date = new Date();
-
-  const rows = [renderDaysOfTheWeek(), ...renderShiftsForMonth(date, settings)];
+export function ShiftTable(settings: IShiftSettings) {
+  const rows = [renderDaysOfTheWeek(), ...renderShiftsForMonth(settings)];
 
   return (
-    <table>
-      <tbody>{rows}</tbody>
-    </table>
+    <div>
+      <h3>
+        {monthNames[settings.date.getMonth()]} {settings.date.getFullYear()}
+      </h3>
+      <table>
+        <tbody>{rows}</tbody>
+      </table>
+    </div>
   );
 }
