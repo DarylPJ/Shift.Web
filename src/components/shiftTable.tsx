@@ -27,7 +27,7 @@ const monthNames = [
 ];
 
 export type Shift = "blue" | "green" | "red" | "purple" | "yellow";
-type ShiftResults = "D" | "N" | "";
+type ShiftType = "D" | "N" | "";
 
 const zeroDays = new Map<Shift, number>([
   ["blue", new Date(2021, 10, 1).getTime()],
@@ -38,11 +38,16 @@ const zeroDays = new Map<Shift, number>([
 ]);
 
 interface IShiftSettings {
-  enabledShifts: Shift[];
+  enabledShifts: ReadonlyArray<Shift>;
   date: Date;
 }
 
-function calculateShiftValue(date: Date, zeroDate: number): ShiftResults {
+interface IShiftResult {
+  shift: Shift;
+  type: ShiftType;
+}
+
+function calculateShiftValue(date: Date, zeroDate: number): ShiftType {
   const diff = date.getTime() - zeroDate;
 
   const days = Math.round(diff / (1000 * 3600 * 24));
@@ -67,7 +72,7 @@ function calculateShiftValue(date: Date, zeroDate: number): ShiftResults {
 }
 
 function renderShiftsForDay(settings: IShiftSettings): JSX.Element[] {
-  const results = [];
+  const results: IShiftResult[] = [];
 
   for (const shift of settings.enabledShifts) {
     const zeroDay = zeroDays.get(shift);
@@ -82,16 +87,22 @@ function renderShiftsForDay(settings: IShiftSettings): JSX.Element[] {
       continue;
     }
 
-    results.push(<div className={styles[shift]}>{shiftValue}</div>);
+    results.push({ type: shiftValue, shift });
   }
 
-  return results;
+  return results.sort().map((result) => (
+    <div key={result.type} className={styles[result.shift]}>
+      {result.type}
+    </div>
+  ));
 }
 
 function renderDaysOfTheWeek(): JSX.Element {
-  const cells = daysOfTheWeek.map((i) => <ShiftCell header={i}></ShiftCell>);
+  const cells = daysOfTheWeek.map((i) => (
+    <ShiftCell key={i} header={i}></ShiftCell>
+  ));
 
-  return <tr>{cells}</tr>;
+  return <tr key={"days"}>{cells}</tr>;
 }
 
 function renderShiftsForMonth(settings: IShiftSettings): JSX.Element[] {
@@ -120,7 +131,7 @@ function renderShiftsForMonth(settings: IShiftSettings): JSX.Element[] {
       const day = row * 7 + dayOfTheWeek + 1 - firstDay;
 
       if (day < 1 || day > daysInMonth) {
-        week.push(<ShiftCell />);
+        week.push(<ShiftCell key={day} />);
         continue;
       }
 
@@ -133,10 +144,14 @@ function renderShiftsForMonth(settings: IShiftSettings): JSX.Element[] {
         enabledShifts: settings.enabledShifts,
       });
 
-      week.push(<ShiftCell header={day.toString()}>{shiftResult}</ShiftCell>);
+      week.push(
+        <ShiftCell key={day} header={day.toString()}>
+          {shiftResult}
+        </ShiftCell>
+      );
     }
 
-    rows.push(<tr>{week}</tr>);
+    rows.push(<tr key={row}>{week}</tr>);
   }
 
   return rows;

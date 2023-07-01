@@ -2,20 +2,15 @@
 
 import { useState } from "react";
 import styles from "./page.module.css";
-import { Shift, ShiftTable } from "@/components/shiftTable";
-
-const defaultShifts: ReadonlyArray<Shift> = [
-  "blue",
-  "green",
-  "purple",
-  "red",
-  "yellow",
-];
+import { ShiftTable } from "@/components/shiftTable";
+import { ShiftSettings, allShifts } from "@/components/shiftSettings";
 
 const minimumDate = new Date(2021, 10, 1);
 
 export default function Home() {
   const [date, setDate] = useState(new Date());
+  const [showSettings, setShowSettings] = useState(false);
+  const [enabledShifts, setEnabledShifts] = useState(allShifts);
 
   const onNextButtonClick = () => {
     const workingDate = new Date(date);
@@ -34,6 +29,8 @@ export default function Home() {
     setDate(workingDate);
   };
 
+  const onSettingsButtonClick = () => setShowSettings(!showSettings);
+
   const oneMonthPreviousDate = new Date(date);
   oneMonthPreviousDate.setMonth(oneMonthPreviousDate.getMonth() - 1);
 
@@ -46,7 +43,11 @@ export default function Home() {
         Previous
       </button>
       <button onClick={onNextButtonClick}>Next</button>
-      <ShiftTable enabledShifts={[...defaultShifts]} date={date} />
+      <button onClick={onSettingsButtonClick}>Settings</button>
+      <ShiftTable enabledShifts={enabledShifts} date={date} />
+      {showSettings ? (
+        <ShiftSettings enabledShifts={enabledShifts}></ShiftSettings>
+      ) : null}
     </main>
   );
 }
