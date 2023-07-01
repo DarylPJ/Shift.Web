@@ -90,11 +90,13 @@ function renderShiftsForDay(settings: IShiftSettings): JSX.Element[] {
     results.push({ type: shiftValue, shift });
   }
 
-  return results.sort().map((result) => (
-    <div key={result.type} className={styles[result.shift]}>
-      {result.type}
-    </div>
-  ));
+  return results
+    .sort((i, j) => +(i.shift < j.shift))
+    .map((result) => (
+      <div key={result.type} className={styles[result.shift]}>
+        {result.type}
+      </div>
+    ));
 }
 
 function renderDaysOfTheWeek(): JSX.Element {

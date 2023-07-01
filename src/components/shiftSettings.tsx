@@ -10,14 +10,41 @@ export const allShifts: ReadonlyArray<Shift> = [
 ];
 
 interface IShiftSettingsProps {
-  enabledShifts: ReadonlyArray<string>;
+  enabledShifts: ReadonlyArray<Shift>;
+  onEnabledShiftsChanged: (enabledShifts: ReadonlyArray<Shift>) => void;
 }
 
-export function ShiftSettings({ enabledShifts }: IShiftSettingsProps) {
+export function ShiftSettings(props: IShiftSettingsProps) {
+  const onEnabledShiftsChanged = (
+    ev: React.ChangeEvent<HTMLInputElement>,
+    checked: boolean
+  ) => {
+    const element = ev.currentTarget.closest<HTMLElement>("[data-shift]");
+    const shift = element?.dataset.shift as Shift;
+
+    if (!shift) {
+      return;
+    }
+
+    let shifts = [...props.enabledShifts];
+
+    if (checked) {
+      shifts.push(shift);
+    } else {
+      shifts = shifts.filter((i) => i !== shift);
+    }
+
+    props.onEnabledShiftsChanged(shifts);
+  };
+
   const shiftSettings = allShifts.map((i) => (
     <section key={i}>
       <div>{i}</div>
-      <Switch defaultChecked={enabledShifts.includes(i)} />
+      <Switch
+        data-shift={i}
+        checked={props.enabledShifts.includes(i)}
+        onChange={onEnabledShiftsChanged}
+      />
     </section>
   ));
 
