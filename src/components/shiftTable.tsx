@@ -91,7 +91,7 @@ function renderShiftsForMonth(
     0
   ).getDate();
 
-  let firstDay = date.getDay() - 1;
+  let firstDay = new Date(date.getFullYear(), date.getMonth(), 1).getDay() - 1;
   if (firstDay < 0) {
     firstDay = 6;
   }
