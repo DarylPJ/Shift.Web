@@ -91,7 +91,7 @@ function renderShiftsForDay(settings: IShiftSettings): JSX.Element[] {
   }
 
   return results
-    .sort((i, j) => +(i.shift < j.shift))
+    .sort((i, j) => j.shift.localeCompare(i.shift))
     .map((result) => (
       <div key={result.type} className={styles[result.shift]}>
         {result.type}
