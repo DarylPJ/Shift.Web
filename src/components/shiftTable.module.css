@@ -17,3 +17,29 @@
 .yellow {
   color: yellow;
 }
+
+.content {
+  display: flex;
+  flex-direction: column;
+  padding: 5%;
+}
+
+.title {
+  text-align: center;
+}
+
+.result-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 1.2rem;
+  width: 100%;
+}
+
+.table {
+  border-collapse: collapse;
+}
+
+.result {
+  padding: 0 2px;
+}

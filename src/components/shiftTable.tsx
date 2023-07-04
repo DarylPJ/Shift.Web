@@ -91,9 +91,12 @@ function renderShiftsForDay(settings: IShiftSettings): JSX.Element[] {
   }
 
   return results
-    .sort((i, j) => j.shift.localeCompare(i.shift))
+    .sort((i, j) => i.type.localeCompare(j.type))
     .map((result) => (
-      <div key={result.type} className={styles[result.shift]}>
+      <div
+        key={result.type}
+        className={`${styles[result.shift]} ${styles.result}`}
+      >
         {result.type}
       </div>
     ));
@@ -104,7 +107,11 @@ function renderDaysOfTheWeek(): JSX.Element {
     <ShiftCell key={i} header={i}></ShiftCell>
   ));
 
-  return <tr key={"days"}>{cells}</tr>;
+  return (
+    <tr className={styles.cell} key={"days"}>
+      {cells}
+    </tr>
+  );
 }
 
 function renderShiftsForMonth(settings: IShiftSettings): JSX.Element[] {
@@ -129,6 +136,13 @@ function renderShiftsForMonth(settings: IShiftSettings): JSX.Element[] {
   for (let row = 0; row < 6; row++) {
     const week = [];
 
+    const firstDayOfWeek = row * 7 + 1 - firstDay;
+    const emptyRow = firstDayOfWeek > daysInMonth;
+
+    if (emptyRow) {
+      continue;
+    }
+
     for (let dayOfTheWeek = 0; dayOfTheWeek < 7; dayOfTheWeek++) {
       const day = row * 7 + dayOfTheWeek + 1 - firstDay;
 
@@ -148,12 +162,16 @@ function renderShiftsForMonth(settings: IShiftSettings): JSX.Element[] {
 
       week.push(
         <ShiftCell key={day} header={day.toString()}>
-          {shiftResult}
+          <div className={styles["result-container"]}>{shiftResult}</div>
         </ShiftCell>
       );
     }
 
-    rows.push(<tr key={row}>{week}</tr>);
+    rows.push(
+      <tr className={styles.cell} key={row}>
+        {week}
+      </tr>
+    );
   }
 
   return rows;
@@ -163,11 +181,11 @@ export function ShiftTable(settings: IShiftSettings) {
   const rows = [renderDaysOfTheWeek(), ...renderShiftsForMonth(settings)];
 
   return (
-    <div>
-      <h3>
+    <div className={styles.content}>
+      <h3 className={styles.title}>
         {monthNames[settings.date.getMonth()]} {settings.date.getFullYear()}
       </h3>
-      <table>
+      <table className={styles.table}>
         <tbody>{rows}</tbody>
       </table>
     </div>

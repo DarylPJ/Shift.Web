@@ -1,5 +1,9 @@
+import styles from "./shiftSettings.module.css";
+
 import Switch from "@mui/material/Switch";
 import { Shift } from "./shiftTable";
+import { Button, IconButton } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 
 export const allShifts: ReadonlyArray<Shift> = [
   "blue",
@@ -11,7 +15,12 @@ export const allShifts: ReadonlyArray<Shift> = [
 
 interface IShiftSettingsProps {
   enabledShifts: ReadonlyArray<Shift>;
-  onEnabledShiftsChanged: (enabledShifts: ReadonlyArray<Shift>) => void;
+  onEnabledShiftsChange: (enabledShifts: ReadonlyArray<Shift>) => void;
+  onCloseClick: () => void;
+}
+
+function capitalise(word: string): string {
+  return word.charAt(0).toUpperCase() + word.slice(1, word.length);
 }
 
 export function ShiftSettings(props: IShiftSettingsProps) {
@@ -34,12 +43,12 @@ export function ShiftSettings(props: IShiftSettingsProps) {
       shifts = shifts.filter((i) => i !== shift);
     }
 
-    props.onEnabledShiftsChanged(shifts);
+    props.onEnabledShiftsChange(shifts);
   };
 
   const shiftSettings = allShifts.map((i) => (
-    <section key={i}>
-      <div>{i}</div>
+    <section key={i} className={styles["shift-setting"]}>
+      <div>{capitalise(i)}</div>
       <Switch
         data-shift={i}
         checked={props.enabledShifts.includes(i)}
@@ -48,5 +57,20 @@ export function ShiftSettings(props: IShiftSettingsProps) {
     </section>
   ));
 
-  return shiftSettings;
+  return (
+    <div>
+      <div className={styles["close-button-container"]}>
+        <Button
+          variant="outlined"
+          color="inherit"
+          className={styles["close-button"]}
+          onClick={props.onCloseClick}
+          endIcon={<CloseIcon></CloseIcon>}
+        >
+          Close
+        </Button>
+      </div>
+      <div className={styles["shift-settings-container"]}>{shiftSettings}</div>
+    </div>
+  );
 }

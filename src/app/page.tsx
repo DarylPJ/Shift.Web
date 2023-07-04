@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import styles from "./page.module.css";
 import { Shift, ShiftTable } from "@/components/shiftTable";
 import { ShiftSettings, allShifts } from "@/components/shiftSettings";
+import Button from "@mui/material/Button";
 
 const key = "enabledShifts";
 const minimumDate = new Date(2021, 10, 1);
@@ -67,20 +68,35 @@ export default function Home() {
 
   return (
     <main className={styles.main}>
-      <button
-        onClick={onPreviousButtonClick}
-        disabled={oneMonthPreviousDate < minimumDate}
-      >
-        Previous
-      </button>
-      <button onClick={onNextButtonClick}>Next</button>
-      <button onClick={onSettingsButtonClick}>Settings</button>
+      <div className={styles["button-container"]}>
+        <Button
+          color="inherit"
+          variant="outlined"
+          onClick={onPreviousButtonClick}
+          disabled={oneMonthPreviousDate < minimumDate}
+        >
+          Previous
+        </Button>
+        <Button color="inherit" variant="outlined" onClick={onNextButtonClick}>
+          Next
+        </Button>
+        <Button
+          color="inherit"
+          variant="outlined"
+          onClick={onSettingsButtonClick}
+        >
+          Settings
+        </Button>
+      </div>
       <ShiftTable enabledShifts={enabledShifts} date={date} />
       {showSettings ? (
-        <ShiftSettings
-          enabledShifts={enabledShifts}
-          onEnabledShiftsChanged={onEnabledShiftsChanged}
-        ></ShiftSettings>
+        <div className={styles["shift-container"]}>
+          <ShiftSettings
+            enabledShifts={enabledShifts}
+            onEnabledShiftsChange={onEnabledShiftsChanged}
+            onCloseClick={onSettingsButtonClick}
+          ></ShiftSettings>
+        </div>
       ) : null}
     </main>
   );
